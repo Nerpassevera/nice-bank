@@ -1,0 +1,19 @@
+.nav-item {
+  margin: auto;
+}
+
+#createStatus {
+  color: white;
+  font-size: large;
+}
+
+#login-btn,
+#signup-btn {
+  margin: 3px;
+}
+
+#root {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 900px;
+}

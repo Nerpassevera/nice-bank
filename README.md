@@ -1,4 +1,4 @@
-# Bad Bank App
+# Not So Bad Bank App
 
 ## Description/Motivation
 The Bad Bank App is designed to simulate a banking application where users can perform basic banking operations like creating an account, depositing money, and withdrawing money. This project is built to help understand and implement a full-stack application using modern web technologies. It is aimed at developers and learners who wish to gain practical experience in building and deploying a web application with a back-end and front-end separation.
@@ -25,7 +25,7 @@ npm install
 ### 4. Run the back-end server:
 ```
 cd ../server
-node server.js
+node index.js
 ```
 ### 5. Run the front-end development server:
 ```
@@ -37,13 +37,16 @@ Open your browser and go to http://localhost:3000.
 
 ## Screenshots
 
-Home Page of the Bad Bank App
+Home Page of the Bad Bank App  
+<img src="./assets/home-page.png"/>
 
 
-Create Account Page
+Create Account Page  
+<img src="assets/create-account-page.png"/>
 
 
-Deposit Money Page
+Deposit Money Page  
+<img src="assets/home-page.png"/>
 
 ## Technology Used
 

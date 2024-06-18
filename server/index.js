@@ -4,7 +4,7 @@ const cors    = require('cors');
 const dal     = require('./dal.js');
 
 // serve static files from public library
-app.use(express.static('public'));
+// app.use(express.static('public'));
 app.use(cors());
 
 // create user account route
