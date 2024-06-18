@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/static/css/main.61d16fac.css",
+    "main.js": "/static/js/main.329ae051.js",
+    "static/media/BadBank-logo.jpg": "/static/media/BadBank-logo.62459a4bb811c01efe55.jpg",
+    "index.html": "/index.html",
+    "main.61d16fac.css.map": "/static/css/main.61d16fac.css.map",
+    "main.329ae051.js.map": "/static/js/main.329ae051.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.61d16fac.css",
+    "static/js/main.329ae051.js"
+  ]
+}
