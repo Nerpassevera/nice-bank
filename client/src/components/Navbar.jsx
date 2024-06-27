@@ -4,6 +4,7 @@ import { Tooltip } from "bootstrap";
 import { UserContext } from "../index.jsx";
 import useAuthentication from "../authentication/auth.js";
 
+
 /**
  * Represents a navigation bar component.
  * @returns {JSX.Element} The JSX element representing the navigation bar.
