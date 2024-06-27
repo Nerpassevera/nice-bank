@@ -78,4 +78,4 @@ Deposit Money Page
 * __Account Management__: Edit account details and preferences.
 
 ## License
-This project is licensed under the [MIT License](./license). 
+This project is licensed under the [MIT License](./LICENSE). 
