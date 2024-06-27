@@ -1,6 +1,5 @@
 import React from "react";
-import Card from "../context";
-import { UserContext } from "../index.js";
+import Card from "../context.jsx";
 
 /**
  * Represents a component for creating a user account.

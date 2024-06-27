@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
-import Card from "../context";
-import { UserContext } from "../index.js";
+import Card from "../context.jsx";
+import { UserContext } from "../index.jsx";
 
 /**
  * Represents a component for depositing funds into a user's account.
@@ -49,7 +49,7 @@ export default function Deposit() {
     ctx.history.push(`${user[0].name} deposited $${deposit}`);
   }
 
-  validateUser();
+  // validateUser();
 
   return (
     <Card
