@@ -1,6 +1,6 @@
 import React from "react";
-import Card from "../context.js";
-import { UserContext } from "../index.js";
+import Card from "../context.jsx";
+import { UserContext } from "../index.jsx";
 
 /**
  * Represents a component for withdrawing funds from a user's account.

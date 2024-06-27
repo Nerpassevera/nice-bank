@@ -8,7 +8,9 @@
 }
 
 #login-btn,
-#signup-btn {
+#signup-btn,
+#logout-btn,
+#account-greeting {
   margin: 3px;
 }
 
