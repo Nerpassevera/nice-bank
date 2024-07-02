@@ -17,7 +17,7 @@ export function writeToDatabase(email, operation) {
     // redirect: "follow",
   };
 
-  fetch("http://localhost:3001/save-logs/", requestOptions)
+  fetch("/save-logs/", requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
     .catch((error) => console.error(error));
@@ -42,7 +42,7 @@ export function addUserToDatabase(name, email, password, account_number) {
     body: raw,
   };
 
-  fetch("http://localhost:3001/account/create", requestOptions)
+  fetch("/account/create", requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
     .catch((error) => console.error(error));
@@ -58,7 +58,7 @@ export function requestUserBalance(email) {
     headers: myHeaders,
   };
 
-  return fetch(`http://localhost:3001/account/balance/${email}`, requestOptions)
+  return fetch(`/account/balance/${email}`, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       return result;
@@ -81,7 +81,7 @@ export function balanceOperation(email, amount) {
       body: raw,
     };
 
-    return fetch("http://localhost:3001/balance/operations", requestOptions)
+    return fetch("/balance/operations", requestOptions)
       .then((response) => response.text())
       .then((result) => console.log(result))
       .catch((error) => console.error(error));
@@ -96,7 +96,7 @@ export function requestOperationHistory(email) {
     headers: myHeaders,
   };
   
-  return fetch(`http://localhost:3001/account/log-history/${email}`, requestOptions)
+  return fetch(`/account/log-history/${email}`, requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
     .catch((error) => console.error(error));

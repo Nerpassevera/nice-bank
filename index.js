@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const dal = require("./dal.js");
+const path = require('path');
 
 // serve static files from public library
 // app.use(express.static('public'));
@@ -80,5 +81,15 @@ app.get("/account/balance/:email", async function (req, res) {
   });
 });
 
-let port = 3001;
-app.listen(port, () => console.log(`Running on port http://localhost:${port}`));
+// Serve static files from the React frontend app
+app.use(express.static(path.join(__dirname, 'client/build')));
+// Anything that doesn't match the above, send back index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/client/build/index.html'))
+});
+
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
