@@ -11,13 +11,13 @@ import { UserContext } from "../index.jsx";
 export default function AllData() {
   const [data, setData] = useState("");
 
-  useEffect(() => {
-    fetch("http://localhost:3001/account/all")
-    .then(response => response.json())
-    .then((data) => {
-      setData(data);
-    });
-  }, []);
+  // useEffect(() => {
+  //   fetch("http://localhost:3001/account/all")
+  //   .then(response => response.json())
+  //   .then((data) => {
+  //     setData(data);
+  //   });
+  // }, []);
 
   const content = [];
   const ctx = useContext(UserContext);
@@ -34,12 +34,12 @@ export default function AllData() {
        </tr>
     );
   }
-  let history = [];
-  console.log(requestOperationHistory(ctx.loggedUser.email))
-    .then( response => {
-      response.map( item => console.log("&&&   ", item))
-      }
-    );
+  // let history = [];
+  // console.log(requestOperationHistory(ctx.loggedUser.email))
+  //   .then( response => {
+  //     response.map( item => console.log("&&&   ", item))
+  //     }
+  //   );
 
 
   return (
@@ -63,11 +63,11 @@ export default function AllData() {
         Operations history
         <br />
       </h1>
-      <table className="table">
+      {/* <table className="table">
         {history.map(element => {
           return <tbody>element</tbody>
         })}
-      </table>
+      </table> */}
 
     </>
   );
