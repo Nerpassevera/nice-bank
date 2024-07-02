@@ -1,5 +1,6 @@
 import React from "react";
 import Card from "../context.jsx";
+import useAuthentication from '../authentication/auth.js'
 
 /**
  * Represents a component for creating a user account.
@@ -11,6 +12,9 @@ export default function CreateAccount() {
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+
+  const authFunctions = useAuthentication();
+
 
   /**
    * Clears the form by resetting the name, email, and password fields and setting show to true.
@@ -26,81 +30,24 @@ export default function CreateAccount() {
    * Displays an error message with the given label and clears it after 3 seconds.
    * @param {string} label - The label for the error message.
    */
-  function errorMsg(label) {
+  function errorMsgTimer(label) {
     setStatus("Error: " + label);
-    setTimeout(() => setStatus(""), 3000);
+    setTimeout(() => setStatus(""), 5000);
   }
 
-  /**
-   * Validates a field based on its value and label.
-   * @param {string} field - The value of the field to validate.
-   * @param {string} label - The label of the field to validate.
-   * @returns {boolean} True if the field is valid, false otherwise.
-   */
-  function validate(field) {
-    if (!field) {
-      errorMsg("All fields are requiered");
-      return false;
-    }
-    // Validation for email field
-    if (
-      // If this is an email field
-      field === email &&
-      // If email format is correct
-      !String(field)
-        .toLowerCase()
-        .match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/)
-    ){
-      errorMsg("email is incorrect");
-      return false;
-    }
-    if (field === password && password.length < 8) {
-      errorMsg("password should be 8 characters or more");
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Checks if a user with the given email already exists.
-   * @param {string} newUserEmail - The email of the new user to check.
-   * @returns {boolean} True if a user with the given email already exists, false otherwise.
-   */
-  const userExists = (newUserEmail) => {
-    let condition = Boolean(
-      // ctx.users.filter((user) => user.email === newUserEmail.toLowerCase())
-      //   .length > 0
-    );
-
-    if (condition) {
-      errorMsg("user with this email already exists");
-      return true;
-    }
-    return false;
-  };
-
-  /**
-   * Handles the create account action by validating the form fields and creating a new user account.
-   */
-  function handleCreate() {
-    if (
-      validate(name, "name") &&
-      validate(email, "email") &&
-      // !userExists(email) &&
-      validate(password, "password")
-    ) {
-      console.log(name, email, password);
-      const url = `http://localhost:3001/account/create/${name}/${email}/${password}`;
-    ( async () => {
-        const res = await fetch(url);
-        const data = await res.json();
-        console.log(data);
-    })();
-      alert(`Account for user ${name} has been created`);
+  async function handleCreate (e) {
+    console.log('CREATE_ACCOUNT: "Create Account" button clicked');
+    e.preventDefault();
+    const attempt = await authFunctions.signUp(name, email, password);
+    console.log('Attempt: ', attempt);
+    if (!attempt){
       clearForm();
       setShow(false);
+    } else {
+      errorMsgTimer(attempt);
     }
   }
+    
 
   return (
     <Card

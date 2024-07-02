@@ -7,12 +7,11 @@ import {
   setPersistence,
   browserSessionPersistence,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 import { useContext } from "react";
 import { UserContext } from "../index.jsx";
-
-console.log(`Test Variable: ${process.env.REACT_APP_TEST_VARIABLE}`);
-console.log(`Your API Key is: ${process.env.REACT_APP_GOOGLE_API_KEY}`);
+import { addUserToDatabase } from "../services/api.js";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -32,6 +31,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth();
+function generateAccountNumber() {
+  return (Math.random() * (10 ** 16)).toFixed(0)
+};
 
 export default function useAuthentication() {
   const ctx = useContext(UserContext);
@@ -41,8 +43,7 @@ export default function useAuthentication() {
       console.log("Error code from getUserFriendlyErrorMessage: ", errorCode);
       const errorMessages = {
         undefined: "",
-        "auth/invalid-email":
-          "Login failed. Please check your credentials and try again.",
+        "auth/invalid-email": "Please check your credentials and try again.",
         "auth/user-disabled":
           "This account has been disabled. Please contact support for assistance.",
         "auth/user-not-found":
@@ -65,10 +66,6 @@ export default function useAuthentication() {
           "A network error has occurred. Please check your connection and try again.",
         "auth/too-many-requests": "Too many attempts. Please try again later.",
         "auth/timeout": "The operation has timed out. Please try again.",
-        "auth/popup-closed-by-user":
-          "The sign-in process was interrupted. Please try again.",
-        "auth/captcha-check-failed":
-          "The security check failed. Please try again.",
       };
 
       // if (errorCode === undefined) return;
@@ -79,48 +76,85 @@ export default function useAuthentication() {
       );
     },
 
+
     handleLogOut: function () {
-      signOut(auth).then(() => {
-        // Sign-out successful.
-      }).catch((error) => {
-        // An error happened.
-      });
+      signOut(auth)
+        .then(() => {
+          // Sign-out successful.
+          ctx.setLoggedUser("");
+        })
+        .catch((error) => {
+          // An error happened.
+        });
     },
 
-    handleLogin: async function (email, password) {
+    login: async function (email, password) {
       return setPersistence(auth, browserSessionPersistence)
         .then(async () => {
           try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const userCredential = await signInWithEmailAndPassword(
+              auth,
+              email,
+              password
+            );
             ctx.setLoggedUser(userCredential.user);
-            console.log("signInWithEmailAndPassword >> ctx.loggedUser has updated to ", ctx.loggedUser);
+            console.log(
+              "signInWithEmailAndPassword >> ctx.loggedUser has updated to ",
+              ctx.loggedUser
+            );
+            
           } catch (error) {
             // signInWithEmailAndPassword errors catcher
-            console.log("signInWithEmailAndPassword errors catcher:", error.code);
+            console.log(
+              "signInWithEmailAndPassword errors catcher:",
+              error.code
+            );
             const valToReturn = this.getUserFriendlyErrorMessage(error.code);
-            console.log("signInWithEmailAndPassword errors catcher >> valToReturn:", valToReturn);
+            console.log(
+              "signInWithEmailAndPassword errors catcher >> valToReturn:",
+              valToReturn
+            );
             return valToReturn;
           }
         })
         .catch((error) => {
           // setPersistence error catcher
-          console.log("🚀 ~ useAuthentication ~ error:", error)
+          console.log("🚀 ~ useAuthentication ~ error:", error);
         });
     },
 
-    signUp: function (fullName, email, password) {
-      const auth = getAuth();
-      createUserWithEmailAndPassword(auth, fullName, email, password)
-        .then((userCredential) => {
-          // Signed up
-          const user = userCredential.user;
-          // ...
-        })
+    signUp: async function (name, email, password) {
+      return await createUserWithEmailAndPassword(auth, email, password)
+        .then(async (userCredential) => {
+          try {
+            // Create new user via Firebase Auth
+            await updateProfile(auth.currentUser, {displayName: name});
+            console.log("AUTH > updateProfile: Profile updated!");
+            ctx.setLoggedUser(userCredential.user);
+
+            // Send data about new user to the "users" collection in db
+            console.log("userCredential.uid", userCredential.user.uid);
+            addUserToDatabase(name, email, password, generateAccountNumber());
+          } catch (error) {
+            // An error occurred
+            console.error(
+              "AUTH > updateProfile: Profile failed to update:",
+              error
+            );
+          }
+        }
+      )
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.error(errorCode, ": ", errorMessage);
+          console.error(
+            "createUserWithEmailAndPassword catch block:",
+            error.code,
+            ": ",
+            error.message
+          );
+          // const errorForUser = String(error.message).replace('Firebase: ', '').split('(')[0];
+
+          return this.getUserFriendlyErrorMessage(error.code);
         });
-    },
+    }
   };
 }

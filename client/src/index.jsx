@@ -1,8 +1,9 @@
 import { Route, Routes, HashRouter } from "react-router-dom";
 import { createRoot } from "react-dom/client";
-import { StrictMode, createContext, useState } from 'react';
+import { StrictMode, createContext, useState, useEffect } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 
 import AllData from "./components/AllData";
 import CreateAccount from "./components/CreateAccount";
@@ -16,15 +17,36 @@ export const UserContext = createContext('');
 
 export default function Spa() {
   const [ loggedUser,  setLoggedUser ] = useState('');
+  const [ loading, setLoading ] = useState(true);
+
+  const auth = getAuth();
   
-  
+  useEffect(() => {
+    console.log("INDEX: useEffect fires");
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log("INDEX: unsibscribe cleanup function fires");
+      if (user) {
+        setLoggedUser(user);
+        console.log("INDEX: now logged in as", loggedUser);
+        console.log("INDEX >> loading: ", loading);
+        setLoading(false);
+      } else {
+        setLoggedUser(null);
+        console.log("INDEX: no logged user");
+        console.log("INDEX >> loading: ", loading);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [auth, loggedUser]);
   return (
     <>
     {/* <StrictMode> */}
 
       <HashRouter>
         <UserContext.Provider
-          value={{ loggedUser, setLoggedUser }}
+          value={{ loggedUser, setLoggedUser, loading, setLoading }}
         >
           <Navbar />
           <Routes>

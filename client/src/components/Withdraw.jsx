@@ -42,18 +42,41 @@ export default function Withdraw() {
    * Otherwise, an insufficient funds message is displayed.
    */
   function handleWithdraw() {
-    if (user[0].balance >= withdraw) {
-      user[0].balance = user[0].balance - Number(withdraw);
-      clearForm();
-      setStatus(`${withdraw}$ withdrew successfully!`);
-      setTimeout(() => {
-        setStatus("");
-      }, 4000);
-      ctx.history.push(`${user[0].name} withdrew $${withdraw}`);
-    } else {
-      setStatus("Insufficient funds");
-      setTimeout(() => setStatus(""), 4000);
-    }
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      "uid": ctx.loggedUser.uid,
+      "amount": withdraw * -1
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+
+    fetch("http://localhost:3001/balance/operations", requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.error(error));
+    
+    
+    
+    
+    // if (user[0].balance >= withdraw) {
+    //   user[0].balance = user[0].balance - Number(withdraw);
+    //   clearForm();
+    //   setStatus(`${withdraw}$ withdrew successfully!`);
+    //   setTimeout(() => {
+    //     setStatus("");
+    //   }, 4000);
+    //   ctx.history.push(`${user[0].name} withdrew $${withdraw}`);
+    // } else {
+    //   setStatus("Insufficient funds");
+    //   setTimeout(() => setStatus(""), 4000);
+    // }
   }
 
   validateUser();

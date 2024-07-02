@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from "react";
 import Card from "../context.jsx";
 import { UserContext } from "../index.jsx";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import useAuthentication from "../authentication/auth.js";
+import { writeToDatabase } from "../services/api.js";
 
 /**
  * Represents a login component.
@@ -12,38 +12,40 @@ export default function Login() {
   const [status, setStatus] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(true);
-  const ctx = useContext(UserContext);
-  const auth = getAuth();
-  const authFunctions = useAuthentication();
   
-  console.log('LOGIN: Login module renders');
+  
+  const ctx = useContext(UserContext);
+  const authFunctions = useAuthentication();
 
-  useEffect(() => {
-    console.log('LOGIN: useEffect fires');
+  console.log("LOGIN: Login module renders");
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log('LOGIN: unsibscribe cleanup function fires');
-      if (user) {
-        ctx.setLoggedUser(user);
-        console.log("LOGIN: now logged in as", ctx.loggedUser);
-      } else {
-        ctx.setLoggedUser(null);
-        console.log("LOGIN: no logged user");
-      }
-      setLoading(false);
-    });
+  // useEffect(() => {
+  //   ctx.loggedUser ? setLoading(false) : setLoading(true)
+  // }, [ctx.loggedUser])
 
-    return () => unsubscribe();
-  }, [auth, ctx]);
+  async function handleLogin(e) {
+    console.log('LOGIN: "LogIN" button clicked');
+    e.preventDefault();
+    const attempt = await authFunctions.login(email, password);
+    console.log("🚀 ~ Login ~ attempt:", attempt);
+    if (attempt !== undefined) {
+      console.log("🚀 ~ Login ~ attempt !== undefined:", attempt !== undefined);
+      errorMsgTimer(attempt);
+      return;
+    } else {
+      writeToDatabase(email, "Successful login")
+      ctx.setLoading(true);
+    }
+  }
+
 
 
   function errorMsgTimer(label) {
     setStatus("Error: " + label);
-    setTimeout(() => setStatus(""), 3000);
+    setTimeout(() => setStatus(""), 5000);
   }
 
-  if (loading) {
+  if (ctx.loading) {
     return (
       <Card
         bgcolor="primary"
@@ -53,7 +55,6 @@ export default function Login() {
       />
     );
   }
-  
 
   return (
     <Card
@@ -90,19 +91,7 @@ export default function Login() {
               id="login-button"
               type="submit"
               className="btn btn-light"
-              onClick={async (e) => {
-                console.log('LOGIN: "LogIN" button clicked');
-                e.preventDefault();
-                const attempt = await authFunctions.handleLogin(email, password);
-                console.log("🚀 ~ Login ~ attempt:", attempt)
-                if ( attempt !== undefined ){
-                  console.log("🚀 ~ Login ~ attempt !== undefined:", attempt !== undefined)
-                  errorMsgTimer(attempt);
-                  return;
-                } else {
-                  setLoading(true);
-                }
-              }}
+              onClick={handleLogin}
             >
               Log in
             </button>
@@ -110,7 +99,7 @@ export default function Login() {
         ) : (
           <>
             <h5>Success</h5>
-            <h6>Enjoy your banking!</h6>            
+            <h6>Enjoy your banking!</h6>
           </>
         )
       }

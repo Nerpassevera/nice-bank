@@ -1,6 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import Card from "../context.jsx";
 import { UserContext } from "../index.jsx";
+import { requestUserBalance, balanceOperation, writeToDatabase } from "../services/api.js";
 
 /**
  * Represents a component for depositing funds into a user's account.
@@ -12,8 +13,28 @@ export default function Deposit() {
   const [status, setStatus] = useState(
     "Please log in for managing your account balance"
   );
+  const [userBalance, setUserBalance] = useState("");
   const ctx = useContext(UserContext);
-  var user = ctx.loggedUser;
+
+  useEffect(() => {
+    console.log("Context has changed");
+    if (ctx.loggedUser) {
+      setStatus("");
+      setShow(true);
+      checkUserBalance();
+    }
+  }, [ctx.loggedUser, checkUserBalance]);
+
+  const user = ctx.loggedUser;
+
+  // console.log("userBalance", userBalance);
+  // console.log("🚀 ~ Deposit ~ ctx.loggedUser.email:", user.email);
+  // console.log("type of userBalance", typeof userBalance);
+
+  function checkUserBalance() {
+    requestUserBalance(ctx.loggedUser.email).then((result) =>
+      setUserBalance(result));
+  }
 
   /**
    * Validates the user and shows the deposit form if the user is logged in.
@@ -40,16 +61,11 @@ export default function Deposit() {
    * Handles the deposit action.
    */
   function handleDeposit() {
-    user[0].balance = user[0].balance + Number(deposit);
+    balanceOperation(user.email, parseInt(deposit))
+      .then(writeToDatabase(user.email, `Deposited $${deposit}`));
     clearForm();
-    setStatus(`${deposit}$ deposited successfully!`);
-    setTimeout(() => {
-      setStatus("");
-    }, 4000);
-    ctx.history.push(`${user[0].name} deposited $${deposit}`);
   }
 
-  // validateUser();
 
   return (
     <Card
@@ -61,7 +77,7 @@ export default function Deposit() {
           <>
             <p style={{ width: "50%", float: "left" }}>Balance</p>
             <p style={{ width: "50%", float: "right" }}>
-              ${user[0] ? user[0].balance : NaN}
+              ${ctx.loggedUser ? userBalance : NaN}
             </p>
             Deposit amount
             <input

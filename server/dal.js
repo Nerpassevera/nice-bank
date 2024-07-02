@@ -16,11 +16,11 @@ async function connectClient() {
 }
 
 // create user account
-async function create(name, email, password) {
+async function create(name, email, password, uid, photo, account_number) {
   await connectClient();
 
   const collection = db.collection("users");
-  const doc = { name, email, password, balance: 0 };
+  const doc = { name, email, password, uid, balance: 0, photo, account_number };
 
   try {
     const result = await collection.insertOne(doc);
@@ -31,6 +31,60 @@ async function create(name, email, password) {
   }
 }
 
+// operation logs
+async function operationLogs(email, operation) {
+  const timeStamp = new Date().toLocaleString();
+
+  await connectClient();
+
+  const collection = db.collection("operation-history");
+  const doc = { timeStamp, email, operation };
+
+  try {
+    const result = await collection.insertOne(doc);
+    return doc;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+
+// IN PROGRESS !!! ____________________
+async function balanceOperation(uid, amount) {
+  await connectClient();
+
+  const collection = db.collection("users");
+
+  try {
+    const updatedAccount = await collection.updateOne(
+      { email: uid },
+      { $inc: { balance: amount } },
+    );
+
+    return updatedAccount;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+
+async function getUserBalance(email) {
+  await connectClient();
+
+  const collection = db.collection("users");
+  console.log("DAL >> email: ", email, typeof email);
+  const query = { email: email };
+  const options = {
+    projection: {
+      _id: 0,
+      balance: 1.0,
+    },
+  };
+
+  var cursor = await collection.findOne(query, options);
+  console.log("DAL >> cursor: ", cursor, typeof(cursor));
+  return String(cursor.balance);
+}
 // get all users
 async function all() {
   await connectClient();
@@ -46,4 +100,10 @@ async function all() {
   }
 }
 
-module.exports = { create, all };
+module.exports = {
+  create,
+  all,
+  balanceOperation,
+  operationLogs,
+  getUserBalance,
+};

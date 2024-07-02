@@ -19,3 +19,15 @@
   margin-right: auto;
   max-width: 900px;
 }
+
+#createStatus {
+  
+  color: #fff;
+  font-size: 15px;
+  /* -webkit-text-stroke: 0.5px black; */
+  text-shadow:
+    1px 1px 0 #912323,
+    -1px 1px 0 #912323,
+    -1px -1px 0 #912323,
+    1px -1px 0 #912323;
+  }

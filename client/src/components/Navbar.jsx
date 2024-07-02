@@ -3,7 +3,7 @@ import BankLogo from "../bank-app-logo.png";
 import { Tooltip } from "bootstrap";
 import { UserContext } from "../index.jsx";
 import useAuthentication from "../authentication/auth.js";
-
+import { writeToDatabase } from "../services/api.js";
 
 /**
  * Represents a navigation bar component.
@@ -12,13 +12,15 @@ import useAuthentication from "../authentication/auth.js";
 
 export default function NavBar() {
   const ctx = useContext(UserContext);
-  const [buttonSwitch, setButtonSwitch] = useState(ctx.loggedUser ? "logout" : "login");
+  const [buttonSwitch, setButtonSwitch] = useState(
+    ctx.loggedUser ? "logout" : "login"
+  );
   const authTools = useAuthentication();
 
-  console.log('NAVBAR: Navbar renders');
+  console.log("NAVBAR: Navbar renders");
 
   useEffect(() => {
-    console.log('NAVBAR: useEffect inside Navbar fires');
+    console.log("NAVBAR: useEffect inside Navbar fires");
 
     // Create tooltips
     // Get all elements with data-bs-toggle="tooltip"
@@ -33,8 +35,6 @@ export default function NavBar() {
           trigger: "hover",
         })
     );
-
-
 
     if (ctx.loggedUser) {
       setButtonSwitch("logout");
@@ -113,9 +113,11 @@ export default function NavBar() {
             </li>
           </ul>
         </div>
-        {buttonSwitch === "logout" ? (
-          <a id="account-greeting">Hello, {ctx.loggedUser.email}!</a>
-        ) : null}
+        <a id="account-greeting">
+          Hello, 
+          {ctx.loggedUser ? ' ' + ctx.loggedUser.displayName : " dear guest"}
+          !
+        </a>
 
         <div className="navbar-nav nav-btn-div">
           {buttonSwitch === "login" ? (
@@ -139,7 +141,10 @@ export default function NavBar() {
               data-bs-toggle="tooltip"
               data-bs-placement="bottom"
               data-bs-title="Log into your account"
-              onClick={authTools.handleLogOut}
+              onClick={() => {
+                authTools.handleLogOut();
+                writeToDatabase(ctx.loggedUser.email, "Logged out successfully!")
+              }}
             >
               Log out
             </a>
