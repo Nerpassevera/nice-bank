@@ -17,7 +17,7 @@ export const UserContext = createContext('');
 
 export default function Spa() {
   const [ loggedUser,  setLoggedUser ] = useState('');
-  const [ loading, setLoading ] = useState(true);
+  const [ loading, setLoading ] = useState(false);
 
   const auth = getAuth();
   

@@ -1,29 +1,50 @@
-import React from "react";
+import { useContext, useState, useEffect } from "react";
 import Card from "../context.jsx";
 import { UserContext } from "../index.jsx";
+import { requestUserBalance, balanceOperation, writeToDatabase } from "../services/api.js";
 
 /**
- * Represents a component for withdrawing funds from a user's account.
- * @returns {JSX.Element} The Withdraw component.
+ * Represents a component for withdrawing funds into a user's account.
+ * @returns {JSX.Element} The withdraw component.
  */
 export default function Withdraw() {
-  const [show, setShow] = React.useState(false);
-  const [withdraw, setWithdraw] = React.useState("");
-  const [status, setStatus] = React.useState(
+  const [show, setShow] = useState(false);
+  const [withdraw, setWithdraw] = useState("");
+  const [status, setStatus] = useState(
     "Please log in for managing your account balance"
   );
-  const ctx = React.useContext(UserContext);
-  var user = ctx.loggedUser;
+  const [userBalance, setUserBalance] = useState("");
+  const ctx = useContext(UserContext);
+
+  useEffect(() => {
+    console.log("Context has changed");
+    if (ctx.loggedUser) {
+      setStatus("");
+      setShow(true);
+      checkUserBalance();
+    }
+  }, [ctx.loggedUser, checkUserBalance]);
+
+  const user = ctx.loggedUser;
+
+  // console.log("userBalance", userBalance);
+  // console.log("🚀 ~ withdraw ~ ctx.loggedUser.email:", user.email);
+  // console.log("type of userBalance", typeof userBalance);
+
+  function checkUserBalance() {
+    requestUserBalance(ctx.loggedUser.email).then((result) =>
+      setUserBalance(result));
+  }
 
   /**
-   * Validates the user and updates the component state accordingly.
+   * Validates the user and shows the withdraw form if the user is logged in.
    */
   function validateUser() {
     if (user && !show) {
       setShow(true);
       setStatus("");
 
-      if (!user[0].balance) {
+      if (!user[0].hasOwnProperty("balance")) {
         user[0].balance = 0;
       }
     }
@@ -38,66 +59,31 @@ export default function Withdraw() {
 
   /**
    * Handles the withdraw action.
-   * If the user has sufficient funds, the balance is updated and a success message is displayed.
-   * Otherwise, an insufficient funds message is displayed.
    */
   function handleWithdraw() {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    const raw = JSON.stringify({
-      "uid": ctx.loggedUser.uid,
-      "amount": withdraw * -1
-    });
-
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow"
-    };
-
-    fetch("http://localhost:3001/balance/operations", requestOptions)
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.error(error));
-    
-    
-    
-    
-    // if (user[0].balance >= withdraw) {
-    //   user[0].balance = user[0].balance - Number(withdraw);
-    //   clearForm();
-    //   setStatus(`${withdraw}$ withdrew successfully!`);
-    //   setTimeout(() => {
-    //     setStatus("");
-    //   }, 4000);
-    //   ctx.history.push(`${user[0].name} withdrew $${withdraw}`);
-    // } else {
-    //   setStatus("Insufficient funds");
-    //   setTimeout(() => setStatus(""), 4000);
-    // }
+    balanceOperation(user.email, -parseInt(withdraw))
+      .then(writeToDatabase(user.email, `withdrawed $${withdraw}`));
+    clearForm();
   }
 
-  validateUser();
 
   return (
     <Card
-      bgcolor="info"
-      header="Withdraw"
+      bgcolor="warning"
+      header="withdraw"
       status={status}
       body={
         show ? (
           <>
             <p style={{ width: "50%", float: "left" }}>Balance</p>
             <p style={{ width: "50%", float: "right" }}>
-              ${user[0] ? user[0].balance : NaN}
+              ${ctx.loggedUser ? userBalance : NaN}
             </p>
             Withdraw amount
             <input
               type="number"
               className="form-control"
-              id="Withdraw"
+              id="withdraw"
               placeholder="Enter withdraw amount"
               value={withdraw}
               min={0}

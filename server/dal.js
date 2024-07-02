@@ -39,7 +39,7 @@ async function operationLogs(email, operation) {
 
   const collection = db.collection("operation-history");
   const doc = { timeStamp, email, operation };
-
+  
   try {
     const result = await collection.insertOne(doc);
     return doc;
@@ -49,18 +49,17 @@ async function operationLogs(email, operation) {
   }
 }
 
-// IN PROGRESS !!! ____________________
 async function balanceOperation(uid, amount) {
   await connectClient();
-
+  
   const collection = db.collection("users");
-
+  
   try {
     const updatedAccount = await collection.updateOne(
       { email: uid },
       { $inc: { balance: amount } },
     );
-
+    
     return updatedAccount;
   } catch (err) {
     console.error(err);
@@ -70,9 +69,8 @@ async function balanceOperation(uid, amount) {
 
 async function getUserBalance(email) {
   await connectClient();
-
+  
   const collection = db.collection("users");
-  console.log("DAL >> email: ", email, typeof email);
   const query = { email: email };
   const options = {
     projection: {
@@ -80,7 +78,7 @@ async function getUserBalance(email) {
       balance: 1.0,
     },
   };
-
+  
   var cursor = await collection.findOne(query, options);
   console.log("DAL >> cursor: ", cursor, typeof(cursor));
   return String(cursor.balance);
@@ -88,11 +86,24 @@ async function getUserBalance(email) {
 // get all users
 async function all() {
   await connectClient();
-
+  
   const collection = db.collection("users");
-
+  
   try {
     const docs = await collection.find({}).toArray();
+    return docs;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+async function getLogHistory(email) {
+  await connectClient();
+  
+  const collection = db.collection("operation-history");
+  
+  try {
+    const docs = await collection.find({ email: email}).toArray();
     return docs;
   } catch (err) {
     console.error(err);
@@ -106,4 +117,5 @@ module.exports = {
   balanceOperation,
   operationLogs,
   getUserBalance,
+  getLogHistory
 };

@@ -20,8 +20,9 @@ export default function Login() {
   console.log("LOGIN: Login module renders");
 
   // useEffect(() => {
-  //   ctx.loggedUser ? setLoading(false) : setLoading(true)
-  // }, [ctx.loggedUser])
+  //   console.log("ctx.loggedUser", Boolean(ctx.loggedUser !== null || undefined));
+  //   ctx.loggedUser !== null || undefined ? ctx.setLoading(false) : ctx.setLoading(true)
+  // }, [ctx])
 
   async function handleLogin(e) {
     console.log('LOGIN: "LogIN" button clicked');

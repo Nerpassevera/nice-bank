@@ -1,15 +1,17 @@
-import React from "react";
+import { useEffect, useContext, useState} from "react";
 // import { UserContext } from "../index.js";
 import "../../src/styles.css";
+import { requestOperationHistory } from "../services/api.js";
+import { UserContext } from "../index.jsx";
 
 /**
  * Renders all data from the UserContext.
  * @returns {JSX.Element} The rendered component.
  */
 export default function AllData() {
-  const [data, setData] = React.useState("");
+  const [data, setData] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch("http://localhost:3001/account/all")
     .then(response => response.json())
     .then((data) => {
@@ -18,6 +20,7 @@ export default function AllData() {
   }, []);
 
   const content = [];
+  const ctx = useContext(UserContext);
 
   // Iterate through each user in the UserContext
   for (const user of data) {
@@ -31,20 +34,18 @@ export default function AllData() {
        </tr>
     );
   }
-
   let history = [];
-  // ctx.history.forEach((element) => {
-  //   history.push(
-  //     <tr key={ctx.history.indexOf(element) + "tr"}>
-  //       <td>{element}</td>
-  //     </tr>
-  //   );
-  // });
+  console.log(requestOperationHistory(ctx.loggedUser.email))
+    .then( response => {
+      response.map( item => console.log("&&&   ", item))
+      }
+    );
+
 
   return (
     <>
       <h1>
-        AllData <br />
+        User profile <br />
       </h1>
       <table className="table">
         <thead>
@@ -63,8 +64,11 @@ export default function AllData() {
         <br />
       </h1>
       <table className="table">
-        <tbody>{history}</tbody>
+        {history.map(element => {
+          return <tbody>element</tbody>
+        })}
       </table>
+
     </>
   );
 }
