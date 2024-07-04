@@ -17,10 +17,10 @@ export default function NavBar() {
   );
   const authTools = useAuthentication();
 
-  console.log("NAVBAR: Navbar renders");
+  // console.log("NAVBAR: Navbar renders");
 
   useEffect(() => {
-    console.log("NAVBAR: useEffect inside Navbar fires");
+    // console.log("NAVBAR: useEffect inside Navbar fires");
 
     // Create tooltips
     // Get all elements with data-bs-toggle="tooltip"
@@ -38,10 +38,10 @@ export default function NavBar() {
 
     if (ctx.loggedUser) {
       setButtonSwitch("logout");
-      console.log('NAVBAR: buttonSwitch has set to "logOUT btn"');
+      // console.log('NAVBAR: buttonSwitch has set to "logOUT btn"');
     } else {
       setButtonSwitch("login");
-      console.log('NAVBAR: buttonSwitch has set to "logIN btn"');
+      // console.log('NAVBAR: buttonSwitch has set to "logIN btn"');
     }
   }, [ctx.loggedUser, buttonSwitch]);
 

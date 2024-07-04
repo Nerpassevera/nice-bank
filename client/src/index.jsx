@@ -22,19 +22,19 @@ export default function Spa() {
   const auth = getAuth();
   
   useEffect(() => {
-    console.log("INDEX: useEffect fires");
+    // console.log("INDEX: useEffect fires");
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log("INDEX: unsibscribe cleanup function fires");
+      // console.log("INDEX: unsibscribe cleanup function fires");
       if (user) {
         setLoggedUser(user);
-        console.log("INDEX: now logged in as", loggedUser);
-        console.log("INDEX >> loading: ", loading);
+        // console.log("INDEX: now logged in as", loggedUser);
+        // console.log("INDEX >> loading: ", loading);
         setLoading(false);
       } else {
         setLoggedUser(null);
-        console.log("INDEX: no logged user");
-        console.log("INDEX >> loading: ", loading);
+        // console.log("INDEX: no logged user");
+        // console.log("INDEX >> loading: ", loading);
       }
     });
 

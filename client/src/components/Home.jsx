@@ -1,11 +1,15 @@
 import Card from "../context";
 import BankImg from "../bank.png";
+import { requestAll } from '../services/api.js'
 
 /**
  * Renders the Home component.
  *
  * @returns {JSX.Element} The rendered Home component.
  */
+
+requestAll().then( res => console.log(res));
+
 export default function Home() {
   return (
     <Card

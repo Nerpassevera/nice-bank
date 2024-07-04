@@ -48,6 +48,23 @@ export function addUserToDatabase(name, email, password, account_number) {
     .catch((error) => console.error(error));
 };
 
+export function requestAll() {
+
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+  };
+
+  return fetch(`/account/all`, requestOptions)
+    .then((response) => response.text())
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => console.error(error));
+};
 export function requestUserBalance(email) {
 
   const myHeaders = new Headers();
@@ -63,6 +80,25 @@ export function requestUserBalance(email) {
     .then((result) => {
       return result;
     })
+    .catch((error) => console.error(error));
+};
+
+export function requestUserData(email) {
+
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+  };
+
+  return fetch(`/account/data/${email}`, requestOptions)
+  .then((response) => response.json())
+  .then((cursor) => {
+    console.log("API >> cursor: ", typeof(cursor), cursor);
+    return cursor
+})
     .catch((error) => console.error(error));
 };
 

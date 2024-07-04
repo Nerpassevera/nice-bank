@@ -73,6 +73,13 @@ app.get("/account/log-history/:email", async function (req, res) {
   });
 });
 
+app.get("/account/data/:email", async function (req, res) {
+  await dal.getUserData(req.params.email).then((docs) => {
+    console.log("EXPRESS >>  cursor: ", typeof(docs), docs);
+    res.send(docs);
+  });
+});
+
 app.get("/account/balance/:email", async function (req, res) {
   console.log("EXPRESS >> req.params.email: ", req.params.email);
   await dal.getUserBalance(req.params.email).then((docs) => {

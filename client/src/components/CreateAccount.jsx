@@ -1,19 +1,21 @@
-import React from "react";
+import { useState, useContext } from "react";
 import Card from "../context.jsx";
-import useAuthentication from '../authentication/auth.js'
+import useAuthentication from '../authentication/auth.js';
+import { UserContext } from "../index.jsx";
 
 /**
  * Represents a component for creating a user account.
  * @returns {JSX.Element} The JSX element for the CreateAccount component.
  */
 export default function CreateAccount() {
-  const [show, setShow] = React.useState(true);
-  const [status, setStatus] = React.useState("");
-  const [name, setName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [show, setShow] = useState(true);
+  const [status, setStatus] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const authFunctions = useAuthentication();
+  const ctx = useContext(UserContext);
 
 
   /**
@@ -41,6 +43,7 @@ export default function CreateAccount() {
     const attempt = await authFunctions.signUp(name, email, password);
     console.log('Attempt: ', attempt);
     if (!attempt){
+      ctx.setLoggedUser();
       clearForm();
       setShow(false);
     } else {

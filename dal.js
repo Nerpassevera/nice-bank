@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { MongoClient } = require("mongodb");
 const url = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@atlascluster.nnu49ja.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster`;
+// const url = 'mongodb://localhost:27017';
 let db = null;
 
 // connect to mongo
@@ -84,6 +85,22 @@ async function getUserBalance(email) {
   console.log("DAL >> cursor: ", cursor, typeof(cursor));
   return String(cursor.balance);
 }
+async function getUserData(email) {
+  await connectClient();
+  
+  const collection = db.collection("users");
+  const query = { email: email };
+  const options = {
+    // projection: {
+    //   _id: 0,
+    //   balance: 1.0,
+    // },
+  };
+  
+  var cursor = await collection.findOne(query);
+  console.log("DAL >> cursor: ", cursor, typeof(cursor));
+  return cursor;
+}
 // get all users
 async function all() {
   await connectClient();
@@ -118,5 +135,6 @@ module.exports = {
   balanceOperation,
   operationLogs,
   getUserBalance,
+  getUserData,
   getLogHistory
 };
