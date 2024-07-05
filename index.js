@@ -15,7 +15,6 @@ app.use(cors());
 
 // create user account route
 app.post("/account/create", function (req, res) {
-  console.log("REQUEST BODY:", req.body);
   dal
     .create(
       req.body.name,
@@ -31,7 +30,6 @@ app.post("/account/create", function (req, res) {
         req.body.name,
         `Account for user ${req.body.name} was created`
       );
-      console.log(user);
       res.send(user);
     });
 });
@@ -39,9 +37,7 @@ app.post("/account/create", function (req, res) {
 
 // Deposite route
 app.post("/balance/operations", function (req, res) {
-  console.log("REQUEST BODY:", req.body);
   dal.balanceOperation(req.body.email, req.body.amount).then((user) => {
-    console.log(user);
     res.send(user);
   });
 });
@@ -60,30 +56,24 @@ app.post("/save-logs", function (req, res) {
 // all users route
 app.get("/account/all", async function (req, res) {
   await dal.all().then((docs) => {
-    console.log(docs);
     res.send(docs);
   });
 });
 
 app.get("/account/log-history/:email", async function (req, res) {
   await dal.getLogHistory(req.params.email).then((docs) => {
-    console.log(docs);
-    console.log(typeof(docs));
     res.send(docs);
   });
 });
 
 app.get("/account/data/:email", async function (req, res) {
   await dal.getUserData(req.params.email).then((docs) => {
-    console.log("EXPRESS >>  cursor: ", typeof(docs), docs);
     res.send(docs);
   });
 });
 
 app.get("/account/balance/:email", async function (req, res) {
-  console.log("EXPRESS >> req.params.email: ", req.params.email);
   await dal.getUserBalance(req.params.email).then((docs) => {
-    console.log("INDEX >> balance:", docs)
     res.send(docs);
   });
 });

@@ -7,9 +7,6 @@ export function writeToDatabase(email, operation) {
     operation: operation,
   };
 
-  console.log("raw: ", raw);
-  console.log("JSON raw: ", JSON.stringify(raw));
-
   const requestOptions = {
     method: "POST",
     headers: myHeaders,
@@ -19,9 +16,9 @@ export function writeToDatabase(email, operation) {
 
   fetch("/save-logs/", requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    // .then((result) => console.log(result))
     .catch((error) => console.error(error));
-};
+}
 
 export function addUserToDatabase(name, email, password, account_number) {
   const myHeaders = new Headers();
@@ -44,12 +41,11 @@ export function addUserToDatabase(name, email, password, account_number) {
 
   fetch("/account/create", requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    // .then((result) => console.log(result))
     .catch((error) => console.error(error));
-};
+}
 
 export function requestAll() {
-
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -64,9 +60,8 @@ export function requestAll() {
       return result;
     })
     .catch((error) => console.error(error));
-};
+}
 export function requestUserBalance(email) {
-
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -81,10 +76,9 @@ export function requestUserBalance(email) {
       return result;
     })
     .catch((error) => console.error(error));
-};
+}
 
 export function requestUserData(email) {
-
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -94,46 +88,49 @@ export function requestUserData(email) {
   };
 
   return fetch(`/account/data/${email}`, requestOptions)
-  .then((response) => response.json())
-  .then((cursor) => {
-    console.log("API >> cursor: ", typeof(cursor), cursor);
-    return cursor
-})
+    .then((response) => response.json())
+    .then((cursor) => {
+      return cursor;
+    })
     .catch((error) => console.error(error));
-};
+}
 
 export function balanceOperation(email, amount) {
   const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Content-Type", "application/json");
 
-    const raw = JSON.stringify({
-      email: email,
-      amount: amount,
-    });
+  const raw = JSON.stringify({
+    email: email,
+    amount: amount,
+  });
 
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-    };
+  const requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+  };
 
-    return fetch("/balance/operations", requestOptions)
+  return (
+    fetch("/balance/operations", requestOptions)
       .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.error(error));
-};
+      // .then((result) => console.log(result))
+      .catch((error) => console.error(error))
+  );
+}
 
 export function requestOperationHistory(email) {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
-  
+
   const requestOptions = {
     method: "GET",
     headers: myHeaders,
   };
-  
+
   return fetch(`/account/log-history/${email}`, requestOptions)
-    .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((response) => response.json())
+    .then((cursor) => {
+      return cursor;
+    })
     .catch((error) => console.error(error));
 }

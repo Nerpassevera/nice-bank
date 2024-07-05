@@ -5,20 +5,44 @@ import { UserContext } from "../index.jsx";
 
 export default function AllData() {
   const [userData, setUserData] = useState(null);
+  const [operationHistory, setOperationHistory] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const ctx = useContext(UserContext);
 
   useEffect(() => {
-    if (ctx.loggedUser) {
+    async function loadDataFromDB() {
       requestUserData(ctx.loggedUser.email)
-        .then(data => {
+        .then((data) => {
           setUserData(data);
-          setIsLoading(false);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error fetching user data:", error);
-          setIsLoading(false);
         });
+      return requestOperationHistory(ctx.loggedUser.email)
+        .then((data) => {
+          return data;
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    }
+
+    if (ctx.loggedUser) {
+      loadDataFromDB()
+        .then((data) => {
+          setOperationHistory(
+            data.map((item) => {
+              return (
+                <tr key={item._id}>
+                  <td>{item.email}</td>
+                  <td>{item.timeStamp}</td>
+                  <td>{item.operation}</td>
+                </tr>
+              );
+            })
+          );
+        })
+        .then(setIsLoading(false));
     }
   }, [ctx.loggedUser]);
 
@@ -47,13 +71,19 @@ export default function AllData() {
           )}
         </tbody>
       </table>
-
       <h1>
         Operations history
         <br />
       </h1>
       <table className="table">
-        {/* Здесь можно добавить логику для отображения истории операций */}
+        <thead>
+          <tr>
+            <th scope="col">Email</th>
+            <th scope="col">Date and Time</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>{!isLoading && operationHistory && operationHistory}</tbody>
       </table>
     </>
   );

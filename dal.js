@@ -82,7 +82,6 @@ async function getUserBalance(email) {
   };
   
   var cursor = await collection.findOne(query, options);
-  console.log("DAL >> cursor: ", cursor, typeof(cursor));
   return String(cursor.balance);
 }
 async function getUserData(email) {
@@ -98,7 +97,6 @@ async function getUserData(email) {
   };
   
   var cursor = await collection.findOne(query);
-  console.log("DAL >> cursor: ", cursor, typeof(cursor));
   return cursor;
 }
 // get all users
