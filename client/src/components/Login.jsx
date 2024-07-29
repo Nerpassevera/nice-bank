@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 import Card from "../context.jsx";
 import { UserContext } from "../index.jsx";
 import useAuthentication from "../authentication/auth.js";
@@ -17,20 +17,11 @@ export default function Login() {
   const ctx = useContext(UserContext);
   const authFunctions = useAuthentication();
 
-  console.log("LOGIN: Login module renders");
-
-  // useEffect(() => {
-  //   console.log("ctx.loggedUser", Boolean(ctx.loggedUser !== null || undefined));
-  //   ctx.loggedUser !== null || undefined ? ctx.setLoading(false) : ctx.setLoading(true)
-  // }, [ctx])
 
   async function handleLogin(e) {
-    console.log('LOGIN: "LogIN" button clicked');
     e.preventDefault();
     const attempt = await authFunctions.login(email, password);
-    console.log("🚀 ~ Login ~ attempt:", attempt);
     if (attempt !== undefined) {
-      console.log("🚀 ~ Login ~ attempt !== undefined:", attempt !== undefined);
       errorMsgTimer(attempt);
       return;
     } else {

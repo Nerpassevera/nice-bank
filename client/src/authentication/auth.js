@@ -13,10 +13,7 @@ import { useContext } from "react";
 import { UserContext } from "../index.jsx";
 import { addUserToDatabase } from "../services/api.js";
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_GOOGLE_API_KEY,
   authDomain: "nice-bank-7b37a.firebaseapp.com",
@@ -30,15 +27,17 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-const auth = getAuth();
+export const auth = getAuth();
 function generateAccountNumber() {
-  return (Math.random() * (10 ** 16)).toFixed(0)
-};
+  return (Math.random() * 10 ** 16).toFixed(0);
+}
+
 
 export default function useAuthentication() {
   const ctx = useContext(UserContext);
-
+  
   return {
+
     getUserFriendlyErrorMessage: function (errorCode) {
       console.log("Error code from getUserFriendlyErrorMessage: ", errorCode);
       const errorMessages = {
@@ -68,14 +67,11 @@ export default function useAuthentication() {
         "auth/timeout": "The operation has timed out. Please try again.",
       };
 
-      // if (errorCode === undefined) return;
-
       return (
         errorMessages[errorCode] ||
         "An unknown error occurred. Please try again."
       );
     },
-
 
     handleLogOut: function () {
       signOut(auth)
@@ -102,9 +98,7 @@ export default function useAuthentication() {
               "signInWithEmailAndPassword >> ctx.loggedUser has updated to ",
               ctx.loggedUser
             );
-            
           } catch (error) {
-            // signInWithEmailAndPassword errors catcher
             console.log(
               "signInWithEmailAndPassword errors catcher:",
               error.code
@@ -128,7 +122,7 @@ export default function useAuthentication() {
         .then(async (userCredential) => {
           try {
             // Create new user via Firebase Auth
-            await updateProfile(auth.currentUser, {displayName: name});
+            await updateProfile(auth.currentUser, { displayName: name });
             console.log("AUTH > updateProfile: Profile updated!");
             ctx.setLoggedUser(userCredential.user);
 
@@ -142,8 +136,7 @@ export default function useAuthentication() {
               error
             );
           }
-        }
-      )
+        })
         .catch((error) => {
           console.error(
             "createUserWithEmailAndPassword catch block:",
@@ -151,10 +144,9 @@ export default function useAuthentication() {
             ": ",
             error.message
           );
-          // const errorForUser = String(error.message).replace('Firebase: ', '').split('(')[0];
 
           return this.getUserFriendlyErrorMessage(error.code);
         });
-    }
+    },
   };
 }

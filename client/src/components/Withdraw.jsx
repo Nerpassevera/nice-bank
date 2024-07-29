@@ -17,9 +17,10 @@ export default function Withdraw() {
   const ctx = useContext(UserContext);
 
   useEffect(() => {
-    console.log("Context has changed");
     if (ctx.loggedUser) {
-      setStatus("");
+      if (status === "Please log in for managing your account balance"){
+        setStatus("");
+      };
       setShow(true);
       checkUserBalance();
     }
@@ -27,28 +28,13 @@ export default function Withdraw() {
 
   const user = ctx.loggedUser;
 
-  // console.log("userBalance", userBalance);
-  // console.log("🚀 ~ withdraw ~ ctx.loggedUser.email:", user.email);
-  // console.log("type of userBalance", typeof userBalance);
 
   function checkUserBalance() {
     requestUserBalance(ctx.loggedUser.email).then((result) =>
       setUserBalance(result));
   }
 
-  /**
-   * Validates the user and shows the withdraw form if the user is logged in.
-   */
-  function validateUser() {
-    if (user && !show) {
-      setShow(true);
-      setStatus("");
 
-      if (!user[0].hasOwnProperty("balance")) {
-        user[0].balance = 0;
-      }
-    }
-  }
 
   /**
    * Clears the withdraw form.
@@ -61,10 +47,16 @@ export default function Withdraw() {
    * Handles the withdraw action.
    */
   function handleWithdraw() {
-    balanceOperation(user.email, -parseInt(withdraw))
-      .then(writeToDatabase(user.email, `withdrawed $${withdraw}`));
-    clearForm();
-  }
+    if (Number(userBalance) > Number(withdraw)){
+      balanceOperation(user.email, -parseInt(withdraw))
+      .then(writeToDatabase(user.email, `Withdrawed $${withdraw}`));
+      clearForm();
+    } else {
+      setStatus("Error: insufficient funds!");
+        setTimeout(() => setStatus(""), 5000);
+      }
+    }
+  
 
 
   return (

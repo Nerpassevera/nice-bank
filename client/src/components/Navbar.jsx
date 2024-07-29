@@ -15,15 +15,12 @@ export default function NavBar() {
   const [buttonSwitch, setButtonSwitch] = useState(
     ctx.loggedUser ? "logout" : "login"
   );
+  const [show, setShow] = useState(false);
+
   const authTools = useAuthentication();
 
-  // console.log("NAVBAR: Navbar renders");
 
   useEffect(() => {
-    // console.log("NAVBAR: useEffect inside Navbar fires");
-
-    // Create tooltips
-    // Get all elements with data-bs-toggle="tooltip"
     const tooltipTriggerList = document.querySelectorAll(
       '[data-bs-toggle="tooltip"]'
     );
@@ -38,17 +35,16 @@ export default function NavBar() {
 
     if (ctx.loggedUser) {
       setButtonSwitch("logout");
-      // console.log('NAVBAR: buttonSwitch has set to "logOUT btn"');
+      setShow(true)
     } else {
       setButtonSwitch("login");
-      // console.log('NAVBAR: buttonSwitch has set to "logIN btn"');
     }
   }, [ctx.loggedUser, buttonSwitch]);
 
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
-        <a className="navbar-brand" href="#" alt="Nice Bank Logo">
+        <a className="navbar-brand" href="#/" alt="Nice Bank Logo">
           <img src={BankLogo} alt="Bad Bank logo" href="#" width="70" />
         </a>
         <button
@@ -99,8 +95,19 @@ export default function NavBar() {
                 Withdraw
               </a>
             </li>
-
             <li className="nav-item">
+              <a
+                className="nav-link"
+                href="#/transfer"
+                data-bs-toggle="tooltip"
+                data-bs-placement="bottom"
+                data-bs-title="Transfer money to another user"
+              >
+                Transfer
+              </a>
+            </li>
+
+            { show ? (<li className="nav-item">
               <a
                 className="nav-link"
                 href="#/alldata"
@@ -108,9 +115,9 @@ export default function NavBar() {
                 data-bs-placement="bottom"
                 data-bs-title="See all accounts data"
               >
-                All Data
+                Account
               </a>
-            </li>
+            </li>) : null}
           </ul>
         </div>
         <a id="account-greeting">

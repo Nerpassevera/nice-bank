@@ -1,136 +1,230 @@
-export function writeToDatabase(email, operation) {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+import { auth } from '../authentication/auth.js';
 
-  const raw = {
-    email: email,
-    operation: operation,
-  };
+async function authCall() {
+    
+  // call server with token
+  if (auth.currentUser) {
+    return auth
+      .currentUser.getIdToken()
+      .then((idToken) => {
+        return idToken
+      })
+      .catch((error) => console.error("Authentication error:", error));
+  } else {
+    console.warn(
+      "There is currently no logged in user. Unable to call Auth Route."
+    );
+  }
+};
+export async function writeToDatabase(email, operation) {
 
-  const requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: JSON.stringify(raw),
-    // redirect: "follow",
-  };
+  try{
+    const idToken = await authCall();
+    if (!idToken) throw new Error("No ID token available");
 
-  fetch("/save-logs/", requestOptions)
-    .then((response) => response.text())
-    // .then((result) => console.log(result))
-    .catch((error) => console.error(error));
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", `Bearer ${idToken}`);
+    
+    const raw = {
+      email: email,
+      operation: operation,
+    };
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: JSON.stringify(raw),
+    };
+
+    const response = await fetch('/save-logs', requestOptions);
+    if (!response.ok) {
+      throw new Error("Failed to write this operation to the history log")
+    };
+    const result = await response.text();
+    console.log("Operation log saving ... ", result);
+  } catch(error) {
+    console.error("Error connecting to history logs: ", error);
+    throw error;
+  }
 }
 
-export function addUserToDatabase(name, email, password, account_number) {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
 
-  const raw = JSON.stringify({
-    name: name,
-    email: email,
-    password: password,
-    balance: 0,
-    photo: "client/src/no-user-image-icon.webp",
-    account_number: account_number,
-  });
 
-  const requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-  };
+export async function addUserToDatabase(name, email, password, account_number) {
 
-  fetch("/account/create", requestOptions)
-    .then((response) => response.text())
-    // .then((result) => console.log(result))
-    .catch((error) => console.error(error));
+  try {
+    const idToken = await authCall();
+    if (!idToken) throw new Error("No ID token available");
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", `Bearer ${idToken}`);
+
+    const raw = JSON.stringify({
+      name: name,
+      email: email,
+      password: password,
+      balance: 0,
+      photo: "client/src/no-user-image-icon.webp",
+      account_number: account_number,
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw
+    };
+
+    const response = await fetch(`/account/create`, requestOptions);
+    if (!response.ok) {
+      throw new Error("Failed to fetch user data");
+    }
+    const result = await response.text();
+    console.log("New user has added:", result); 
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    throw error;
+  }
 }
 
-export function requestAll() {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
 
-  const requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-  };
+export async function requestUserBalance(email) {
+  try {
+    const idToken = await authCall();
+    if (!idToken) throw new Error("No ID token available");
 
-  return fetch(`/account/all`, requestOptions)
-    .then((response) => response.text())
-    .then((result) => {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", `Bearer ${idToken}`);
+
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+    };
+
+    const response = await fetch(`/account/balance/${email}`, requestOptions);
+    if (!response.ok) {
+      throw new Error("Failed to fetch user balance");
+    }
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error fetching user balance:", error);
+    throw error;
+  }
+}
+
+export async function requestRecipient(email) {
+
+  try {
+    const idToken = await authCall();
+    if (!idToken) throw new Error("No ID token available");
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", `Bearer ${idToken}`);
+
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+    };
+
+    const response = await fetch(`/account/users/${email}`, requestOptions);
+    if (!response.ok) {
+      throw new Error("Failed to fetch user data");
+    }
+    const result = await response.json();
+    return result; 
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    throw error;
+  }
+}
+
+export async function requestUserData(email) {
+  
+    try {
+      const idToken = await authCall();
+      if (!idToken) throw new Error("No ID token available");
+  
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Authorization", `Bearer ${idToken}`);
+  
+      const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+      };
+  
+      const response = await fetch(`/account/data/${email}`, requestOptions);
+      if (!response.ok) {
+        throw new Error("Failed to fetch user data");
+      }
+      const result = await response.json();
       return result;
-    })
-    .catch((error) => console.error(error));
-}
-export function requestUserBalance(email) {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      throw error;
+    }
+  }
 
-  const requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-  };
 
-  return fetch(`/account/balance/${email}`, requestOptions)
-    .then((response) => response.text())
-    .then((result) => {
-      return result;
-    })
-    .catch((error) => console.error(error));
-}
+export async function balanceOperation(email, amount) {
 
-export function requestUserData(email) {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+  try {
+    const idToken = await authCall();
+    if (!idToken) throw new Error("No ID token available");
 
-  const requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-  };
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", `Bearer ${idToken}`);
 
-  return fetch(`/account/data/${email}`, requestOptions)
-    .then((response) => response.json())
-    .then((cursor) => {
-      return cursor;
-    })
-    .catch((error) => console.error(error));
-}
+    const raw = JSON.stringify({
+      email: email,
+      amount: amount,
+    });
 
-export function balanceOperation(email, amount) {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
 
-  const raw = JSON.stringify({
-    email: email,
-    amount: amount,
-  });
-
-  const requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-  };
-
-  return (
-    fetch("/balance/operations", requestOptions)
-      .then((response) => response.text())
-      // .then((result) => console.log(result))
-      .catch((error) => console.error(error))
-  );
+    const response = await fetch(`/balance/operations`, requestOptions);
+    if (!response.ok) {
+      throw new Error("Failed to fetch user data");
+    }
+    const result = await response.text();
+    return result;
+  } catch (error) {
+    console.error("Error acessing balance operations:", error);
+    throw error;
+  }
 }
 
-export function requestOperationHistory(email) {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+export async function requestOperationHistory(email) {
+  try {
+    const idToken = await authCall();
+    if (!idToken) throw new Error("No ID token available");
 
-  const requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-  };
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", `Bearer ${idToken}`);
 
-  return fetch(`/account/log-history/${email}`, requestOptions)
-    .then((response) => response.json())
-    .then((cursor) => {
-      return cursor;
-    })
-    .catch((error) => console.error(error));
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+    };
+
+    const response = await fetch(`/account/log-history/${email}`, requestOptions);
+    if (!response.ok) {
+      throw new Error("Unauthorized");
+    }
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error fetching operation history:", error);
+    throw error;
+  }
 }

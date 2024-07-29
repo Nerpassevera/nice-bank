@@ -7,44 +7,36 @@ export default function AllData() {
   const [userData, setUserData] = useState(null);
   const [operationHistory, setOperationHistory] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const ctx = useContext(UserContext);
 
   useEffect(() => {
     async function loadDataFromDB() {
-      requestUserData(ctx.loggedUser.email)
-        .then((data) => {
-          setUserData(data);
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-        });
-      return requestOperationHistory(ctx.loggedUser.email)
-        .then((data) => {
-          return data;
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-        });
+      try {
+        const userData = await requestUserData(ctx.loggedUser.email);
+        setUserData(userData);
+
+        const operationHistoryData = await requestOperationHistory(ctx.loggedUser.email);
+        setOperationHistory(operationHistoryData);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
     }
 
     if (ctx.loggedUser) {
-      loadDataFromDB()
-        .then((data) => {
-          setOperationHistory(
-            data.map((item) => {
-              return (
-                <tr key={item._id}>
-                  <td>{item.email}</td>
-                  <td>{item.timeStamp}</td>
-                  <td>{item.operation}</td>
-                </tr>
-              );
-            })
-          );
-        })
-        .then(setIsLoading(false));
+      loadDataFromDB();
     }
   }, [ctx.loggedUser]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <>
@@ -61,7 +53,7 @@ export default function AllData() {
           </tr>
         </thead>
         <tbody>
-          {!isLoading && userData && (
+          {userData && (
             <tr key={userData._id}>
               <th scope="row">{userData.name}</th>
               <td>{userData.account_number}</td>
@@ -83,7 +75,15 @@ export default function AllData() {
             <th scope="col">Action</th>
           </tr>
         </thead>
-        <tbody>{!isLoading && operationHistory && operationHistory}</tbody>
+        <tbody>
+          {operationHistory && operationHistory.map(item => (
+            <tr key={item._id}>
+              <td>{item.email}</td>
+              <td>{item.timeStamp}</td>
+              <td>{item.operation}</td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </>
   );

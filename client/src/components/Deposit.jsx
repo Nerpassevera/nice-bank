@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useCallback } from "react";
 import Card from "../context.jsx";
 import { UserContext } from "../index.jsx";
 import { requestUserBalance, balanceOperation, writeToDatabase } from "../services/api.js";
@@ -10,14 +10,24 @@ import { requestUserBalance, balanceOperation, writeToDatabase } from "../servic
 export default function Deposit() {
   const [show, setShow] = useState(false);
   const [deposit, setDeposit] = useState("");
-  const [status, setStatus] = useState(
-    "Please log in for managing your account balance"
-  );
-  const [userBalance, setUserBalance] = useState("");
+  const [status, setStatus] = useState("Please log in for managing your account balance");
+  const [userBalance, setUserBalance] = useState(null);
   const ctx = useContext(UserContext);
 
+  const user = ctx.loggedUser;
+
+  const checkUserBalance = useCallback(async () => {
+    if (user) {
+      try {
+        const balance = await requestUserBalance(user.email);
+        setUserBalance(balance);
+      } catch (error) {
+        console.error("Error fetching user balance:", error);
+      }
+    }
+  }, [user]);
+
   useEffect(() => {
-    console.log("Context has changed");
     if (ctx.loggedUser) {
       setStatus("");
       setShow(true);
@@ -25,47 +35,26 @@ export default function Deposit() {
     }
   }, [ctx.loggedUser, checkUserBalance]);
 
-  const user = ctx.loggedUser;
-
-  // console.log("userBalance", userBalance);
-  // console.log("🚀 ~ Deposit ~ ctx.loggedUser.email:", user.email);
-  // console.log("type of userBalance", typeof userBalance);
-
-  function checkUserBalance() {
-    requestUserBalance(ctx.loggedUser.email).then((result) =>
-      setUserBalance(result));
-  }
-
-  /**
-   * Validates the user and shows the deposit form if the user is logged in.
-   */
-  function validateUser() {
-    if (user && !show) {
-      setShow(true);
-      setStatus("");
-
-      if (!user[0].hasOwnProperty("balance")) {
-        user[0].balance = 0;
-      }
-    }
-  }
-
   /**
    * Clears the deposit form.
    */
   function clearForm() {
-    setDeposit(0);
+    setDeposit("");
   }
 
   /**
    * Handles the deposit action.
    */
-  function handleDeposit() {
-    balanceOperation(user.email, parseInt(deposit))
-      .then(writeToDatabase(user.email, `Deposited $${deposit}`));
-    clearForm();
+  async function handleDeposit() {
+    try {
+      await balanceOperation(user.email, parseInt(deposit));
+      await writeToDatabase(user.email, `Deposited $${deposit}`);
+      await checkUserBalance(); // Update balance after deposit
+      clearForm();
+    } catch (error) {
+      console.error("Error during deposit operation:", error);
+    }
   }
-
 
   return (
     <Card
@@ -77,7 +66,7 @@ export default function Deposit() {
           <>
             <p style={{ width: "50%", float: "left" }}>Balance</p>
             <p style={{ width: "50%", float: "right" }}>
-              ${ctx.loggedUser ? userBalance : NaN}
+              {userBalance !== null ? `$${userBalance}` : "Loading..."}
             </p>
             Deposit amount
             <input

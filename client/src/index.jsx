@@ -12,6 +12,7 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
 import Withdraw from "./components/Withdraw";
+import Transfer from "./components/Transfer";
 
 export const UserContext = createContext('');
 
@@ -22,19 +23,13 @@ export default function Spa() {
   const auth = getAuth();
   
   useEffect(() => {
-    // console.log("INDEX: useEffect fires");
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      // console.log("INDEX: unsibscribe cleanup function fires");
       if (user) {
         setLoggedUser(user);
-        // console.log("INDEX: now logged in as", loggedUser);
-        // console.log("INDEX >> loading: ", loading);
         setLoading(false);
       } else {
         setLoggedUser(null);
-        // console.log("INDEX: no logged user");
-        // console.log("INDEX >> loading: ", loading);
       }
     });
 
@@ -55,6 +50,7 @@ export default function Spa() {
             <Route path="/login" element={<Login />} />
             <Route path="/deposit" element={<Deposit />} />
             <Route path="/withdraw" element={<Withdraw />} />
+            <Route path="/transfer" element={<Transfer />} />
             <Route path="/alldata" element={<AllData />} />
           </Routes>
         </UserContext.Provider>
@@ -65,14 +61,6 @@ export default function Spa() {
   );
 }
 
-// const container = document.getElementById('root');
-// const root = createRoot(container);
-// root.render(<Spa />);
-
-// import { createRoot } from 'react-dom/client';
-// import React from "react";
-
-// import Spa from './Spa'; // Assuming Spa is your main component
 
 const container = document.getElementById("root");
 if (container) {

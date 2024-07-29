@@ -99,6 +99,16 @@ async function getUserData(email) {
   var cursor = await collection.findOne(query);
   return cursor;
 }
+async function getRecipient(email) {
+  await connectClient();
+  
+  const collection = db.collection("users");
+  const query = { email: email };
+  
+  var cursor = await collection.findOne(query);
+
+  return cursor !== null ? true : false;
+}
 // get all users
 async function all() {
   await connectClient();
@@ -134,5 +144,6 @@ module.exports = {
   operationLogs,
   getUserBalance,
   getUserData,
-  getLogHistory
+  getLogHistory,
+  getRecipient
 };
