@@ -4,7 +4,7 @@ require('dotenv').config();
 // Firebase service account
 const type = "service_account";
 const project_id = "nice-bank-7b37a";
-const private_key_id = "43eb8932cc944dc2a64a574ca4b2d174667a2cc8";
+const private_key_id = "514f407f93ca7331d1174de022a07ef5996f8930";
 const private_key = `${process.env.FIREBASE_ADMIN_KEY}`;
 const client_email = "firebase-adminsdk-5sk9v@nice-bank-7b37a.iam.gserviceaccount.com";
 const client_id = "117080535662412900181";
