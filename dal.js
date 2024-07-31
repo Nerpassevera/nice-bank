@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { MongoClient } = require("mongodb");
-// const url = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@atlascluster.nnu49ja.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster`;
-const url = 'mongodb://localhost:27017';
+const url = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@atlascluster.nnu49ja.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster`;
+// const url = 'mongodb://localhost:27017';
 let db = null;
 
 // connect to mongo
