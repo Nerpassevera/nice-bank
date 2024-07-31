@@ -15,8 +15,8 @@ const auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
 const client_x509_cert_url = "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-5sk9v%40nice-bank-7b37a.iam.gserviceaccount.com";
 const universe_domain = "googleapis.com";
 
-console.log("process.env.FIREBASE_KEYS", process.env.FIREBASE_ADMIN_KEY);
-// console.log("base64 key: ", firebase_private_key_b64);
+console.log("firebase_private_key_b64: ", firebase_private_key_b64);
+console.log("firebase_private_key", firebase_private_key);
 
 admin.initializeApp({
   credential: admin.credential.cert({

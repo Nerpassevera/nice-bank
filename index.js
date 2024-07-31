@@ -11,10 +11,7 @@ app.use(cors());
 
 async function checkToken(req, res, next) {
   const authHeader = req.headers['authorization'];
-  console.log("AUTHHEADER:", authHeader);
   const idToken = authHeader && authHeader.split(' ')[1];
-  console.log("idTOKEN:", idToken);
-  console.log('idToken in the header of checkToken:', idToken);
 
   if (!idToken) {
     return res.status(401).send('Unauthorized: No token provided');
