@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import Card from "../context.jsx";
-import useAuthentication from '../authentication/auth.js';
+import useAuthentication from "../authentication/auth.js";
 import { UserContext } from "../index.jsx";
 
 /**
@@ -16,7 +16,6 @@ export default function CreateAccount() {
 
   const authFunctions = useAuthentication();
   const ctx = useContext(UserContext);
-
 
   /**
    * Clears the form by resetting the name, email, and password fields and setting show to true.
@@ -37,12 +36,18 @@ export default function CreateAccount() {
     setTimeout(() => setStatus(""), 5000);
   }
 
-  async function handleCreate (e) {
+  /**
+   * Handles the creation of a user account by calling the signUp function from the authentication hook.
+   * If successful, clears the form and updates the context with the logged user.
+   * If there is an error, displays the error message.
+   * @param {Event} e - The event object.
+   */
+  async function handleCreate(e) {
     console.log('CREATE_ACCOUNT: "Create Account" button clicked');
     e.preventDefault();
     const attempt = await authFunctions.signUp(name, email, password);
-    console.log('Attempt: ', attempt);
-    if (!attempt){
+    console.log("Attempt: ", attempt);
+    if (!attempt) {
       ctx.setLoggedUser();
       clearForm();
       setShow(false);
@@ -50,7 +55,6 @@ export default function CreateAccount() {
       errorMsgTimer(attempt);
     }
   }
-    
 
   return (
     <Card
@@ -99,7 +103,7 @@ export default function CreateAccount() {
               type="submit"
               className="btn btn-light"
               onClick={handleCreate}
-              disabled={ true ? (!name || !email || !password) : false}
+              disabled={true ? !name || !email || !password : false}
             >
               Create Account
             </button>

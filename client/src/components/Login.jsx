@@ -12,12 +12,15 @@ export default function Login() {
   const [status, setStatus] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
-  
+
   const ctx = useContext(UserContext);
   const authFunctions = useAuthentication();
 
-
+  /**
+   * Handles the login process when the login button is clicked.
+   *
+   * @param {React.FormEvent} e - The form event.
+   */
   async function handleLogin(e) {
     e.preventDefault();
     const attempt = await authFunctions.login(email, password);
@@ -25,13 +28,16 @@ export default function Login() {
       errorMsgTimer(attempt);
       return;
     } else {
-      writeToDatabase(email, "Successful login")
+      writeToDatabase(email, "Successful login");
       ctx.setLoading(true);
     }
   }
 
-
-
+  /**
+   * Displays an error message with the provided label and clears it after 5 seconds.
+   *
+   * @param {string} label - The error message label.
+   */
   function errorMsgTimer(label) {
     setStatus("Error: " + label);
     setTimeout(() => setStatus(""), 5000);

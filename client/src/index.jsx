@@ -1,9 +1,8 @@
 import { Route, Routes, HashRouter } from "react-router-dom";
 import { createRoot } from "react-dom/client";
-import { StrictMode, createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
 
 import AllData from "./components/AllData";
 import CreateAccount from "./components/CreateAccount";
@@ -14,16 +13,22 @@ import Navbar from "./components/Navbar";
 import Withdraw from "./components/Withdraw";
 import Transfer from "./components/Transfer";
 
-export const UserContext = createContext('');
+// Create a UserContext to manage the user state throughout the app
+export const UserContext = createContext("");
 
+/**
+ * Main component representing the single page application (SPA).
+ * @returns {JSX.Element} The main SPA component.
+ */
 export default function Spa() {
-  const [ loggedUser,  setLoggedUser ] = useState('');
-  const [ loading, setLoading ] = useState(false);
+  const [loggedUser, setLoggedUser] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  // Initialize Firebase authentication
   const auth = getAuth();
-  
-  useEffect(() => {
 
+  // Use effect to handle user authentication state changes
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setLoggedUser(user);
@@ -37,8 +42,6 @@ export default function Spa() {
   }, [auth, loggedUser]);
   return (
     <>
-    {/* <StrictMode> */}
-
       <HashRouter>
         <UserContext.Provider
           value={{ loggedUser, setLoggedUser, loading, setLoading }}
@@ -55,12 +58,9 @@ export default function Spa() {
           </Routes>
         </UserContext.Provider>
       </HashRouter>
-      {/* </StrictMode> */}
-
     </>
   );
 }
-
 
 const container = document.getElementById("root");
 if (container) {

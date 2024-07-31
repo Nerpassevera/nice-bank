@@ -1,7 +1,11 @@
 import { useContext, useState, useEffect, useCallback } from "react";
 import Card from "../context.jsx";
 import { UserContext } from "../index.jsx";
-import { requestUserBalance, balanceOperation, writeToDatabase } from "../services/api.js";
+import {
+  requestUserBalance,
+  balanceOperation,
+  writeToDatabase,
+} from "../services/api.js";
 
 /**
  * Represents a component for depositing funds into a user's account.
@@ -10,12 +14,17 @@ import { requestUserBalance, balanceOperation, writeToDatabase } from "../servic
 export default function Deposit() {
   const [show, setShow] = useState(false);
   const [deposit, setDeposit] = useState("");
-  const [status, setStatus] = useState("Please log in for managing your account balance");
+  const [status, setStatus] = useState(
+    "Please log in for managing your account balance"
+  );
   const [userBalance, setUserBalance] = useState(null);
   const ctx = useContext(UserContext);
 
   const user = ctx.loggedUser;
 
+  /**
+   * Fetches and sets the user's balance.
+   */
   const checkUserBalance = useCallback(async () => {
     if (user) {
       try {

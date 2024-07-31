@@ -4,9 +4,10 @@ import BankImg from "../bank.png";
 /**
  * Renders the Home component.
  *
+ * This component displays a card with a welcome message for the bank's landing page.
+ *
  * @returns {JSX.Element} The rendered Home component.
  */
-
 
 export default function Home() {
   return (

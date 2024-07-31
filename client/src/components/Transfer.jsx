@@ -23,12 +23,15 @@ export default function Transfer() {
   const [alertShow, setAlertShow] = useState(false);
   const ctx = useContext(UserContext);
 
+  /**
+   * Fetches user balance and updates state when user logs in.
+   */
   useEffect(() => {
     if (ctx.loggedUser) {
       if (ctx.loggedUser) {
-        if (status === "Please log in for managing your account balance"){
+        if (status === "Please log in for managing your account balance") {
           setStatus("");
-        };
+        }
       }
       setShow(true);
       checkUserBalance();
@@ -37,6 +40,9 @@ export default function Transfer() {
 
   const user = ctx.loggedUser;
 
+  /**
+   * Checks the user balance by requesting it from the API.
+   */
   function checkUserBalance() {
     requestUserBalance(ctx.loggedUser.email).then((result) =>
       setUserBalance(result)
@@ -51,6 +57,10 @@ export default function Transfer() {
     setRecipient("");
   }
 
+  /**
+   * Displays an error message with a timer.
+   * @param {string} label - The error message to display.
+   */
   function errorMsgTimer(label) {
     setStatus("Error: " + label);
     setTimeout(() => setStatus(""), 5000);

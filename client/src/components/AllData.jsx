@@ -3,6 +3,10 @@ import "../../src/styles.css";
 import { requestOperationHistory, requestUserData } from "../services/api.js";
 import { UserContext } from "../index.jsx";
 
+/**
+ * AllData component displays user profile information and their operation history.
+ * It fetches the data from the backend and displays it in a table format.
+ */
 export default function AllData() {
   const [userData, setUserData] = useState(null);
   const [operationHistory, setOperationHistory] = useState(null);
@@ -11,12 +15,18 @@ export default function AllData() {
   const ctx = useContext(UserContext);
 
   useEffect(() => {
+    /**
+     * Function to load data from the backend
+     * It fetches user data and operation history
+     */
     async function loadDataFromDB() {
       try {
         const userData = await requestUserData(ctx.loggedUser.email);
         setUserData(userData);
 
-        const operationHistoryData = await requestOperationHistory(ctx.loggedUser.email);
+        const operationHistoryData = await requestOperationHistory(
+          ctx.loggedUser.email
+        );
         setOperationHistory(operationHistoryData);
       } catch (error) {
         setError(error.message);
@@ -30,10 +40,12 @@ export default function AllData() {
     }
   }, [ctx.loggedUser]);
 
+  // Show loading state while data is being fetched
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
+  // Show error message if there is any error
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -76,13 +88,14 @@ export default function AllData() {
           </tr>
         </thead>
         <tbody>
-          {operationHistory && operationHistory.map(item => (
-            <tr key={item._id}>
-              <td>{item.email}</td>
-              <td>{item.timeStamp}</td>
-              <td>{item.operation}</td>
-            </tr>
-          ))}
+          {operationHistory &&
+            operationHistory.map((item) => (
+              <tr key={item._id}>
+                <td>{item.email}</td>
+                <td>{item.timeStamp}</td>
+                <td>{item.operation}</td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </>

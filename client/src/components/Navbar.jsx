@@ -19,7 +19,9 @@ export default function NavBar() {
 
   const authTools = useAuthentication();
 
-
+  /**
+   * Initializes tooltips and sets button state based on user context.
+   */
   useEffect(() => {
     const tooltipTriggerList = document.querySelectorAll(
       '[data-bs-toggle="tooltip"]'
@@ -35,7 +37,7 @@ export default function NavBar() {
 
     if (ctx.loggedUser) {
       setButtonSwitch("logout");
-      setShow(true)
+      setShow(true);
     } else {
       setButtonSwitch("login");
     }
@@ -107,23 +109,24 @@ export default function NavBar() {
               </a>
             </li>
 
-            { show ? (<li className="nav-item">
-              <a
-                className="nav-link"
-                href="#/alldata"
-                data-bs-toggle="tooltip"
-                data-bs-placement="bottom"
-                data-bs-title="See all accounts data"
-              >
-                Account
-              </a>
-            </li>) : null}
+            {show ? (
+              <li className="nav-item">
+                <a
+                  className="nav-link"
+                  href="#/alldata"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="bottom"
+                  data-bs-title="See all accounts data"
+                >
+                  Account
+                </a>
+              </li>
+            ) : null}
           </ul>
         </div>
         <a id="account-greeting">
-          Hello, 
-          {ctx.loggedUser ? ' ' + ctx.loggedUser.displayName : " dear guest"}
-          !
+          Hello,
+          {ctx.loggedUser ? " " + ctx.loggedUser.displayName : " dear guest"}!
         </a>
 
         <div className="navbar-nav nav-btn-div">
@@ -150,7 +153,10 @@ export default function NavBar() {
               data-bs-title="Log into your account"
               onClick={() => {
                 authTools.handleLogOut();
-                writeToDatabase(ctx.loggedUser.email, "Logged out successfully!")
+                writeToDatabase(
+                  ctx.loggedUser.email,
+                  "Logged out successfully!"
+                );
               }}
             >
               Log out

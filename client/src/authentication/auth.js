@@ -24,20 +24,35 @@ const firebaseConfig = {
   appId: "1:649712646476:web:9c6e952bfedbd859e5f7e9",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth();
+
+
+/**
+ * Generates a random 16-digit account number.
+ * 
+ * @returns {string} A randomly generated 16-digit account number.
+ */
 function generateAccountNumber() {
   return (Math.random() * 10 ** 16).toFixed(0);
 }
 
 
+/**
+ * Custom hook for handling user authentication.
+ * Provides methods for logging in, signing up, logging out, and getting user-friendly error messages.
+ */
 export default function useAuthentication() {
   const ctx = useContext(UserContext);
-  
-  return {
 
+  return {
+    
+    /**
+     * Returns a user-friendly error message based on the provided error code.
+     * @param {string} errorCode - The error code returned by the authentication service.
+     * @returns {string} - A user-friendly error message.
+     */
     getUserFriendlyErrorMessage: function (errorCode) {
       console.log("Error code from getUserFriendlyErrorMessage: ", errorCode);
       const errorMessages = {
@@ -73,6 +88,10 @@ export default function useAuthentication() {
       );
     },
 
+    /**
+     * Logs out the currently authenticated user.
+     * Updates the context to reflect the logged-out state.
+     */
     handleLogOut: function () {
       signOut(auth)
         .then(() => {
@@ -84,6 +103,13 @@ export default function useAuthentication() {
         });
     },
 
+    /**
+     * Logs in a user with the provided email and password.
+     * Sets the user in the context if login is successful.
+     * @param {string} email - The email of the user.
+     * @param {string} password - The password of the user.
+     * @returns {Promise<string|undefined>} - A promise that resolves to a user-friendly error message if login fails.
+     */
     login: async function (email, password) {
       return setPersistence(auth, browserSessionPersistence)
         .then(async () => {
@@ -117,6 +143,14 @@ export default function useAuthentication() {
         });
     },
 
+    /**
+     * Signs up a new user with the provided name, email, and password.
+     * Sets the user in the context if sign-up is successful.
+     * @param {string} name - The name of the user.
+     * @param {string} email - The email of the user.
+     * @param {string} password - The password of the user.
+     * @returns {Promise<string|undefined>} - A promise that resolves to a user-friendly error message if sign-up fails.
+     */
     signUp: async function (name, email, password) {
       return await createUserWithEmailAndPassword(auth, email, password)
         .then(async (userCredential) => {
@@ -150,3 +184,4 @@ export default function useAuthentication() {
     },
   };
 }
+
