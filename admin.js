@@ -5,7 +5,8 @@ require('dotenv').config();
 const type = "service_account";
 const project_id = "nice-bank-7b37a";
 const private_key_id = "514f407f93ca7331d1174de022a07ef5996f8930";
-const private_key = `${process.env.FIREBASE_ADMIN_KEY}`;
+const firebase_private_key_b64 = Buffer.from(process.env.FIREBASE_KEYS, 'base64');
+const firebase_private_key = firebase_private_key_b64.toString('utf8');
 const client_email = "firebase-adminsdk-5sk9v@nice-bank-7b37a.iam.gserviceaccount.com";
 const client_id = "117080535662412900181";
 const auth_uri = "https://accounts.google.com/o/oauth2/auth";
@@ -19,8 +20,7 @@ admin.initializeApp({
     type,
     project_id,
     private_key_id,
-    private_key:
-      private_key.replace(/\\n/g,'\n'),
+    private_key: firebase_private_key,
     client_email,
     client_id,
     auth_uri,
