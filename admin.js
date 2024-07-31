@@ -5,7 +5,7 @@ require('dotenv').config();
 const type = "service_account";
 const project_id = "nice-bank-7b37a";
 const private_key_id = "514f407f93ca7331d1174de022a07ef5996f8930";
-const firebase_private_key_b64 = Buffer.from(process.env.FIREBASE_KEYS, 'base64');
+const firebase_private_key_b64 = Buffer.from(process.env.FIREBASE_ADMIN_KEY, 'base64');
 const firebase_private_key = firebase_private_key_b64.toString('utf8');
 const client_email = "firebase-adminsdk-5sk9v@nice-bank-7b37a.iam.gserviceaccount.com";
 const client_id = "117080535662412900181";
@@ -14,6 +14,9 @@ const token_uri = "https://oauth2.googleapis.com/token";
 const auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs";
 const client_x509_cert_url = "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-5sk9v%40nice-bank-7b37a.iam.gserviceaccount.com";
 const universe_domain = "googleapis.com";
+
+console.log("process.env.FIREBASE_KEYS", process.env.FIREBASE_ADMIN_KEY);
+// console.log("base64 key: ", firebase_private_key_b64);
 
 admin.initializeApp({
   credential: admin.credential.cert({
