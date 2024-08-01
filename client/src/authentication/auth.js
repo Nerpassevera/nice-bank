@@ -54,7 +54,6 @@ export default function useAuthentication() {
      * @returns {string} - A user-friendly error message.
      */
     getUserFriendlyErrorMessage: function (errorCode) {
-      console.log("Error code from getUserFriendlyErrorMessage: ", errorCode);
       const errorMessages = {
         undefined: "",
         "auth/invalid-email": "Please check your credentials and try again.",
@@ -120,26 +119,18 @@ export default function useAuthentication() {
               password
             );
             ctx.setLoggedUser(userCredential.user);
-            console.log(
-              "signInWithEmailAndPassword >> ctx.loggedUser has updated to ",
-              ctx.loggedUser
-            );
           } catch (error) {
-            console.log(
+            console.error(
               "signInWithEmailAndPassword errors catcher:",
               error.code
             );
             const valToReturn = this.getUserFriendlyErrorMessage(error.code);
-            console.log(
-              "signInWithEmailAndPassword errors catcher >> valToReturn:",
-              valToReturn
-            );
             return valToReturn;
           }
         })
         .catch((error) => {
           // setPersistence error catcher
-          console.log("🚀 ~ useAuthentication ~ error:", error);
+          console.error("Authentication error", error);
         });
     },
 
@@ -157,11 +148,9 @@ export default function useAuthentication() {
           try {
             // Create new user via Firebase Auth
             await updateProfile(auth.currentUser, { displayName: name });
-            console.log("AUTH > updateProfile: Profile updated!");
             ctx.setLoggedUser(userCredential.user);
 
             // Send data about new user to the "users" collection in db
-            console.log("userCredential.uid", userCredential.user.uid);
             addUserToDatabase(name, email, password, generateAccountNumber());
           } catch (error) {
             // An error occurred

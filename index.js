@@ -27,11 +27,10 @@ async function checkToken(req, res, next) {
 
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
-    console.log("decodedToken:", decodedToken);
     req.user = decodedToken;
     next();
   } catch (error) {
-    console.log("error:", error);
+    console.error("Authentication token error:", error);
     return res.status(401).send("Unauthorized: Invalid token");
   }
 }
@@ -144,7 +143,6 @@ app.get("/account/log-history/:email", checkToken, async function (req, res) {
 app.get("/account/data/:email", checkToken, async function (req, res) {
   try {
     const email = req.params.email;
-    console.log("Inside express: ", email);
     const docs = await dal.getUserData(email);
     res.send(docs);
   } catch (error) {

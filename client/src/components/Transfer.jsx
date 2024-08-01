@@ -72,7 +72,6 @@ export default function Transfer() {
   async function handleTransfer() {
     if (Number(userBalance) > Number(transfer)) {
       await requestRecipient(recipient).then((userExist) => {
-        console.log("user exist: ", userExist);
         if (userExist) {
           balanceOperation(user.email, -parseInt(transfer));
           balanceOperation(recipient, parseInt(transfer));

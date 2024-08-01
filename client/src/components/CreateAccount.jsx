@@ -43,10 +43,8 @@ export default function CreateAccount() {
    * @param {Event} e - The event object.
    */
   async function handleCreate(e) {
-    console.log('CREATE_ACCOUNT: "Create Account" button clicked');
     e.preventDefault();
     const attempt = await authFunctions.signUp(name, email, password);
-    console.log("Attempt: ", attempt);
     if (!attempt) {
       ctx.setLoggedUser();
       clearForm();

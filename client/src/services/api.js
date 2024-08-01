@@ -1,4 +1,4 @@
-import { auth } from '../authentication/auth.js';
+import { auth } from "../authentication/auth.js";
 
 /**
  * Authenticates the current user and returns their ID token.
@@ -6,9 +6,14 @@ import { auth } from '../authentication/auth.js';
  */
 async function authCall() {
   if (auth.currentUser) {
-    return auth.currentUser.getIdToken().then(idToken => idToken).catch(error => console.error("Authentication error:", error));
+    return auth.currentUser
+      .getIdToken()
+      .then((idToken) => idToken)
+      .catch((error) => console.error("Authentication error:", error));
   } else {
-    console.warn("There is currently no logged-in user. Unable to call Auth Route.");
+    console.warn(
+      "There is currently no logged-in user. Unable to call Auth Route."
+    );
   }
 }
 
@@ -28,13 +33,15 @@ export async function writeToDatabase(email, operation) {
     myHeaders.append("Authorization", `Bearer ${idToken}`);
 
     const raw = { email, operation };
-    const requestOptions = { method: "POST", headers: myHeaders, body: JSON.stringify(raw) };
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: JSON.stringify(raw),
+    };
 
-    const response = await fetch('/save-logs', requestOptions);
-    if (!response.ok) throw new Error("Failed to write this operation to the history log");
-
-    const result = await response.text();
-    console.log("Operation log saving ... ", result);
+    const response = await fetch("/save-logs", requestOptions);
+    if (!response.ok)
+      throw new Error("Failed to write this operation to the history log");
   } catch (error) {
     console.error("Error connecting to history logs: ", error);
     throw error;
@@ -58,14 +65,18 @@ export async function addUserToDatabase(name, email, password, account_number) {
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", `Bearer ${idToken}`);
 
-    const raw = JSON.stringify({ name, email, password, balance: 0, photo: "client/src/no-user-image-icon.webp", account_number });
+    const raw = JSON.stringify({
+      name,
+      email,
+      password,
+      balance: 0,
+      photo: "client/src/no-user-image-icon.webp",
+      account_number,
+    });
     const requestOptions = { method: "POST", headers: myHeaders, body: raw };
 
     const response = await fetch(`/account/create`, requestOptions);
     if (!response.ok) throw new Error("Failed to fetch user data");
-
-    const result = await response.text();
-    console.log("New user has added:", result);
   } catch (error) {
     console.error("Error fetching user data:", error);
     throw error;
@@ -198,7 +209,10 @@ export async function requestOperationHistory(email) {
 
     const requestOptions = { method: "GET", headers: myHeaders };
 
-    const response = await fetch(`/account/log-history/${email}`, requestOptions);
+    const response = await fetch(
+      `/account/log-history/${email}`,
+      requestOptions
+    );
     if (!response.ok) throw new Error("Unauthorized");
 
     const result = await response.json();
