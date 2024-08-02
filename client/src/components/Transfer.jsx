@@ -19,7 +19,7 @@ export default function Transfer() {
   const [status, setStatus] = useState(
     "Please log in for managing your account balance"
   );
-  const [userBalance, setUserBalance] = useState("");
+  const [userBalance, setUserBalance] = useState(null);
   const [alertShow, setAlertShow] = useState(false);
   const ctx = useContext(UserContext);
 

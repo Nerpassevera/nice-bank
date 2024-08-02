@@ -17,7 +17,7 @@ export default function Withdraw() {
   const [status, setStatus] = useState(
     "Please log in for managing your account balance"
   );
-  const [userBalance, setUserBalance] = useState("");
+  const [userBalance, setUserBalance] = useState(null);
   const ctx = useContext(UserContext);
 
   /**
