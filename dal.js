@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { MongoClient } = require("mongodb");
-const url = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@atlascluster.nnu49ja.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster`;
-// const url = 'mongodb://localhost:27017';
+// const url = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@atlascluster.nnu49ja.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster`;
+const url = 'mongodb://localhost:27017';
 let db = null;
 
 /**
@@ -143,23 +143,23 @@ async function getRecipient(email) {
   return cursor !== null ? true : false;
 }
 
-/**
- * Gets all users from the database.
- * @returns {Promise<Array>} - An array of all user documents.
- */
-async function all() {
-  await connectClient();
+// /**
+//  * Gets all users from the database.
+//  * @returns {Promise<Array>} - An array of all user documents.
+//  */
+// async function all() {
+//   await connectClient();
 
-  const collection = db.collection("users");
+//   const collection = db.collection("users");
 
-  try {
-    const docs = await collection.find({}).toArray();
-    return docs;
-  } catch (err) {
-    console.error(err);
-    throw err;
-  }
-}
+//   try {
+//     const docs = await collection.find({}).toArray();
+//     return docs;
+//   } catch (err) {
+//     console.error(err);
+//     throw err;
+//   }
+// }
 
 /**
  * Gets operation log history for a user by email.
@@ -182,7 +182,7 @@ async function getLogHistory(email) {
 
 module.exports = {
   create,
-  all,
+  // all,
   balanceOperation,
   operationLogs,
   getUserBalance,

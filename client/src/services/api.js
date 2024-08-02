@@ -216,6 +216,7 @@ export async function requestOperationHistory(email) {
     if (!response.ok) throw new Error("Unauthorized");
 
     const result = await response.json();
+    console.log("RESPONSE: ", result);
     return result;
   } catch (error) {
     console.error("Error fetching operation history:", error);
