@@ -21,8 +21,8 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:3001/",
-        // url: "https://young-retreat-58707-f1d87c2fb5a2.herokuapp.com/api-docs/",
+        // url: "http://localhost:3001/",
+        url: "https://young-retreat-58707-f1d87c2fb5a2.herokuapp.com/api-docs/",
       },
     ],
     components: {
