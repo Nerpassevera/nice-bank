@@ -76,7 +76,7 @@ export default function Withdraw() {
           <>
             <p style={{ width: "50%", float: "left" }}>Balance</p>
             <p style={{ width: "50%", float: "right" }}>
-              ${ctx.loggedUser ? userBalance : NaN}
+            {userBalance !== null ? `$${userBalance}` : "Loading..."}
             </p>
             Withdraw amount
             <input

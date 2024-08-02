@@ -123,7 +123,7 @@ export default function Transfer() {
               <br />
               <p style={{ width: "50%", float: "left" }}>Balance</p>
               <p style={{ width: "50%", float: "right" }}>
-                ${ctx.loggedUser ? userBalance : NaN}
+              {userBalance !== null ? `$${userBalance}` : "Loading..."}
               </p>
               Transfer amount
               <input
